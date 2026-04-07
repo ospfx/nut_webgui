@@ -1,4 +1,0 @@
-[submodule "nut-ddl"]
-	path = nut-ddl
-	url = https://github.com/networkupstools/nut-ddl.git
-	branch = master
