@@ -1,0 +1,27 @@
+{{define "layout"}}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NUT Web GUI</title>
+  <link rel="stylesheet" href="/static/app.css" />
+  <script src="/static/htmx.min.js" defer></script>
+</head>
+<body>
+  <nav class="navbar">
+    <a class="brand" href="/">⚡ NUT Web GUI</a>
+    <ul class="nav-links">
+      <li><a href="/">Dashboard</a></li>
+      <li><a href="/topology">Topology</a></li>
+      <li><a href="/connection">Connections</a></li>
+      <li><a href="/system">System</a></li>
+    </ul>
+  </nav>
+  <main class="container">
+    {{block "content" .}}{{end}}
+  </main>
+  <footer class="footer">
+    <small>NUT Web GUI &mdash; Go edition | <a href="/api/">JSON API</a> | <a href="/probes/health">Health</a></small>
+  </footer>
+</body>
+</html>{{end}}

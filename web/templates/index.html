@@ -1,15 +1,47 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{{.Title}}</title>
-  <link rel="stylesheet" href="/static/app.css" />
-</head>
-<body>
-  <main>
-    <h1>{{.Title}}</h1>
-    <p>Repository has been fully rewritten in Go scaffold.</p>
-  </main>
-</body>
-</html>
+{{define "content"}}
+<h1 class="page-title">Dashboard</h1>
+
+{{if not .Namespaces}}
+<div class="alert alert-warn">
+  <strong>No NUT servers configured.</strong><br>
+  Set <code>UPSD_ADDR</code>, <code>UPSD_USER</code>, and <code>UPSD_PASS</code>
+  environment variables, or provide a <code>config.toml</code>.
+</div>
+{{else}}
+{{range .Namespaces}}
+{{$nsname := .Namespace}}
+<section class="namespace-section">
+  <h2 class="namespace-title">
+    <span class="ns-name">{{.Namespace}}</span>
+    <span class="status-badge status-{{.Status}}">{{.Status}}</span>
+  </h2>
+  {{if .Devices}}
+  <div class="ups-grid">
+    {{range .Devices}}
+    {{$status := index .Vars "ups.status"}}
+    <a class="ups-card {{statusClass $status}}" href="/ups/{{$nsname}}/{{.Name}}">
+      <div class="ups-card-header">
+        <span class="ups-name">{{.Name}}</span>
+        {{if $status}}<span class="ups-status-badge">{{$status}}</span>{{end}}
+      </div>
+      <div class="ups-card-body">
+        <div class="ups-desc">{{if .Description}}{{.Description}}{{else}}No description{{end}}</div>
+        {{$load    := index .Vars "ups.load"}}
+        {{$batt    := index .Vars "battery.charge"}}
+        {{$runtime := index .Vars "battery.runtime"}}
+        <div class="ups-metrics">
+          {{if $load   }}<div class="metric"><span class="metric-label">Load</span>   <span class="metric-value">{{$load}}%</span></div>{{end}}
+          {{if $batt   }}<div class="metric"><span class="metric-label">Battery</span><span class="metric-value">{{$batt}}%</span></div>{{end}}
+          {{if $runtime}}<div class="metric"><span class="metric-label">Runtime</span><span class="metric-value">{{$runtime}}s</span></div>{{end}}
+        </div>
+      </div>
+    </a>
+    {{end}}
+  </div>
+  {{else}}
+  <p class="empty-state">No UPS devices found for this namespace.</p>
+  {{end}}
+</section>
+{{end}}
+{{end}}
+{{end}}

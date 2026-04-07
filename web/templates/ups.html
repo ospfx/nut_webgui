@@ -1,0 +1,79 @@
+{{define "content"}}
+<div class="page-header">
+  <h1 class="page-title">
+    UPS: <span class="ups-name">{{.Device.Name}}</span>
+    <small class="ns-badge">{{.Namespace}}</small>
+  </h1>
+  {{$status := index .Device.Vars "ups.status"}}
+  {{if $status}}<span class="ups-status-badge {{statusClass $status}}">{{$status}}</span>{{end}}
+</div>
+
+<div class="ups-detail-grid"
+     hx-get="/ups/{{.Namespace}}/{{.Device.Name}}"
+     hx-trigger="every {{.PollInterval}}s"
+     hx-select=".ups-detail-grid"
+     hx-swap="outerHTML">
+
+  {{/* Variables table */}}
+  <section class="detail-section">
+    <h2>Variables</h2>
+    <table class="vars-table">
+      <thead><tr><th>Name</th><th>Value</th></tr></thead>
+      <tbody>
+        {{range $k, $v := .Device.Vars}}
+        <tr><td class="var-name">{{$k}}</td><td class="var-value">{{$v}}</td></tr>
+        {{end}}
+      </tbody>
+    </table>
+  </section>
+
+  {{/* Read-write variables */}}
+  {{if .Device.RWVars}}
+  <section class="detail-section">
+    <h2>Writable Variables</h2>
+    {{range $k, $v := .Device.RWVars}}
+    <form class="rw-form"
+          hx-patch="/api/{{$.Namespace}}/devices/{{$.Device.Name}}"
+          hx-trigger="submit"
+          hx-ext="json-enc">
+      <label class="rw-label">{{$k}}</label>
+      <input type="hidden" name="name" value="{{$k}}" />
+      <input class="rw-input" type="text" name="value" value="{{$v}}" />
+      <button class="btn btn-sm" type="submit">Set</button>
+    </form>
+    {{end}}
+  </section>
+  {{end}}
+
+  {{/* Instant commands */}}
+  {{if .Device.Commands}}
+  <section class="detail-section">
+    <h2>Instant Commands</h2>
+    <div class="cmd-list">
+      {{range .Device.Commands}}
+      <form class="cmd-form"
+            hx-post="/api/{{$.Namespace}}/devices/{{$.Device.Name}}/instcmd"
+            hx-trigger="submit"
+            hx-ext="json-enc">
+        <input type="hidden" name="command" value="{{.}}" />
+        <button class="btn btn-cmd" type="submit">{{.}}</button>
+      </form>
+      {{end}}
+    </div>
+  </section>
+  {{end}}
+
+  {{/* Force Shutdown */}}
+  <section class="detail-section fsd-section">
+    <h2>Force Shutdown</h2>
+    <p class="fsd-warn">⚠️ This will immediately trigger a forced shutdown of the UPS.</p>
+    <form class="fsd-form"
+          hx-post="/api/{{.Namespace}}/devices/{{.Device.Name}}/fsd"
+          hx-confirm="Are you sure you want to force shutdown this UPS?"
+          hx-trigger="submit">
+      <button class="btn btn-danger" type="submit">Force Shutdown (FSD)</button>
+    </form>
+  </section>
+
+</div>
+{{end}}
