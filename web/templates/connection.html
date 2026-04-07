@@ -1,0 +1,36 @@
+{{define "content"}}
+<h1 class="page-title">NUT Server Connections</h1>
+
+{{if not .Namespaces}}
+<div class="alert alert-warn">No NUT servers configured.</div>
+{{else}}
+<table class="conn-table">
+  <thead>
+    <tr>
+      <th>Namespace</th>
+      <th>Address</th>
+      <th>Port</th>
+      <th>Status</th>
+      <th>Version</th>
+      <th>Protocol</th>
+      <th>Devices</th>
+      <th>Last Sync</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .Namespaces}}
+    <tr>
+      <td>{{.Namespace}}</td>
+      <td>{{.Address}}</td>
+      <td>{{.Port}}</td>
+      <td><span class="status-badge status-{{.Status}}">{{.Status}}</span></td>
+      <td>{{if .Version}}{{.Version}}{{else}}—{{end}}</td>
+      <td>{{if .ProtocolVersion}}{{.ProtocolVersion}}{{else}}—{{end}}</td>
+      <td>{{.DeviceCount}}</td>
+      <td>{{if .LastSync}}{{.LastSync}}{{else}}—{{end}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+{{end}}
+{{end}}

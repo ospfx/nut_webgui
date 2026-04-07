@@ -1,0 +1,30 @@
+{{define "content"}}
+<h1 class="page-title">Topology</h1>
+
+{{range .Namespaces}}
+{{$nsname := .Namespace}}
+<section class="namespace-section">
+  <h2 class="namespace-title">
+    <span class="ns-name">{{.Namespace}}</span>
+    <span class="status-badge status-{{.Status}}">{{.Status}}</span>
+    <small>({{len .Devices}} device(s))</small>
+  </h2>
+  {{if .Devices}}
+  <ul class="topology-list">
+    {{range .Devices}}
+    {{$status := index .Vars "ups.status"}}
+    <li class="topology-item {{statusClass $status}}">
+      <a href="/ups/{{$nsname}}/{{.Name}}">
+        <strong>{{.Name}}</strong>
+        {{if .Description}} &mdash; {{.Description}}{{end}}
+      </a>
+      {{if $status}}<span class="ups-status-badge">{{$status}}</span>{{end}}
+    </li>
+    {{end}}
+  </ul>
+  {{else}}
+  <p class="empty-state">No devices.</p>
+  {{end}}
+</section>
+{{end}}
+{{end}}
