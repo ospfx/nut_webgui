@@ -186,42 +186,6 @@ func TestParseVarLine(t *testing.T) {
 	}
 }
 
-func TestUpsStatusClass(t *testing.T) {
-	// Test via the exported function in the server package is not accessible here;
-	// test inline logic
-	cases := []struct {
-		status string
-		want   string
-	}{
-		{"OL", "status-online"},
-		{"OL CHRG", "status-online"},
-		{"OB", "status-onbattery"},
-		{"OB LB", "status-onbattery"},
-		{"LB", "status-lowbattery"}, // LB alone means low battery
-		{"FSD", "status-fsd"},
-		{"", "status-unknown"},
-	}
-	for _, tc := range cases {
-		// inline the logic from server package since it's not exported
-		var got string
-		switch {
-		case strings.Contains(tc.status, "OL") && !strings.Contains(tc.status, "OB"):
-			got = "status-online"
-		case strings.Contains(tc.status, "OB"):
-			got = "status-onbattery"
-		case strings.Contains(tc.status, "LB"):
-			got = "status-lowbattery"
-		case strings.Contains(tc.status, "FSD"):
-			got = "status-fsd"
-		default:
-			got = "status-unknown"
-		}
-		if got != tc.want {
-			t.Errorf("statusClass(%q) = %q, want %q", tc.status, got, tc.want)
-		}
-	}
-}
-
 func TestClientAuth(t *testing.T) {
 	host, port := startFakeNUT(t, []fakeMatcher{
 		{prefix: "USERNAME", response: "OK"},

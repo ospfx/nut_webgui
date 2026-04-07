@@ -218,7 +218,7 @@ func (s *Server) getUpsdConfig(ns string) *config.UpsdConfig {
 
 // dialUpsd opens an authenticated connection to a NUT server.
 func dialUpsd(cfg *config.UpsdConfig) (*nut.Client, error) {
-	c, err := nut.Dial(cfg.Address, cfg.Port, 10*1e9) // 10s timeout
+	c, err := nut.Dial(cfg.Address, cfg.Port, 10*time.Second)
 	if err != nil {
 		return nil, err
 	}

@@ -271,3 +271,24 @@ func TestUPSDetailPageRenders(t *testing.T) {
 		t.Fatalf("want 200, got %d: %s", rec.Code, rec.Body.String())
 	}
 }
+
+func TestUpsStatusClass(t *testing.T) {
+cases := []struct {
+status string
+want   string
+}{
+{"OL", "status-online"},
+{"OL CHRG", "status-online"},
+{"OB", "status-onbattery"},
+{"OB LB", "status-onbattery"},
+{"LB", "status-lowbattery"},
+{"FSD", "status-fsd"},
+{"", "status-unknown"},
+}
+for _, tc := range cases {
+got := upsStatusClass(tc.status)
+if got != tc.want {
+t.Errorf("upsStatusClass(%q) = %q, want %q", tc.status, got, tc.want)
+}
+}
+}
